@@ -9,9 +9,7 @@ Session.setDefault('cg', 0);
 
 let mid = String(Math.floor((Math.random() * 1000) + 1));
 
-Tracker.autorun(function () {
   Meteor.subscribe('trades', mid);
-});
 
 Template.top_header.helpers({
   nbConnected: function () {
@@ -33,7 +31,7 @@ Template.top_header.helpers({
 Template.trade_events.helpers({
 
   getElems: function () {
-    let tmp = TradesDB.find({mid: mid}).fetch().reverse();
+    let tmp = TradesDB.find().fetch().reverse();
     drawMChart(1);
     return tmp;
   }
@@ -47,8 +45,9 @@ function drawMChart(arg) {
   aSerie = [];
 
   let i = 10;
+  cm = ~~(new Date().valueOf() / 60000)
   while (i >= 0) {
-    let tmp = TradesDB.find({cm: (cm - i) % 60}).count();
+    let tmp = TradesDB.find({cm: (cm - i), mid: mid}).count();
     aSerie.push(tmp);
     i = i - 1;
   }
@@ -68,13 +67,14 @@ function drawMChart(arg) {
     showArea: true,
     low: 0,
     high: max,
+    height: '100%',
     axisY: {
       onlyInteger: true
-    }
+    },
   };
 
   if (arg == 0) {
-    mChart = new Chartist.Line('#my-chart', data, options);
+    mChart = new Chartist.Line('.ct-chart', data, options);
     Session.set('cg', 1);
   }
   else if (Session.get('cg') > 0 && arg == 1) {

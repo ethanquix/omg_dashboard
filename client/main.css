@@ -5,14 +5,24 @@
     src: url('/fonts/museosans-rounded700.ttf');
 }
 
+html, body {
+    height: 100%;
+}
+
 .body {
     font-family: museosans;
 }
 
 .container {
+    min-height: 100%;
     height: 100%;
     width: 100%;
     font-family: museosans;
+}
+
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .header-row {
@@ -25,6 +35,11 @@
     height: auto;
     font-size: 180%;
     text-align: center;
+}
+
+.main-row {
+    min-height: 100%;
+    height: 100%;
 }
 
 .event-loss {
@@ -55,8 +70,8 @@
     margin-top: 10px;
 }
 
-#my-chart {
-    height: 800px;
+.ct-chart {
+    margin-top: 20px;
 }
 
 .ct-line.ct-threshold-above, .ct-point.ct-threshold-above, .ct-bar.ct-threshold-above {
@@ -73,4 +88,8 @@
 
 .ct-area.ct-threshold-below {
     fill: #59922b;
+}
+
+.ct-label {
+    font-size: 150%;
 }

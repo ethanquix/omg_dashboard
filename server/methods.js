@@ -22,8 +22,7 @@ if (Meteor.isServer) {
             let curr = "€";
             let resultstr = "bet";
             let final = " from " + String(row.new_val.amount) + curr;
-            let d = new Date();
-            let cm = d.getMinutes();
+            let cm = ~~(new Date().valueOf() / 60000);
 
             if (row.new_val.outcome == null) {
               mclass = "event-bet";
@@ -54,13 +53,12 @@ if (Meteor.isServer) {
             });
           });
         });
-
         //self.added('trades', String(i), out);
       }));
     });
 
     self.ready();
-
+    return (TradesDB.find({mid: mid}));
   });
 
   Meteor.methods({
