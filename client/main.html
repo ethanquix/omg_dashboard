@@ -1,0 +1,23 @@
+<head>
+  <title>OMG Dashboard</title>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="row header-row">
+        {{> top_header }}
+    </div>
+    <div class="row main-row">
+        <div class="col-sm-4 mevents">
+            {{> trade_events }}
+            <!--TODO: List of events-->
+        </div>
+        <div class="col-sm-8">
+            <!--TODO: Graph-->
+            <div id="my-chart"></div>
+        </div>
+    </div>
+</div>
+
+</body>

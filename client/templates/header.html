@@ -1,0 +1,30 @@
+<template name="top_header">
+    <div class="col-sm-4">
+        <div class="header-left">
+            <p class="nb-connect">Connected Players: <br>{{ nbConnected }} </p>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="header-right-left">
+            <p class="today-signup">Today Registration: <br>{{ nbSignup }}</p>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="header-right-right">
+            <p class="referral-click">Today Referral Click: <br>{{ nbAffiliation }}</p>
+        </div>
+    </div>
+</template>
+
+
+<template name="trade_events">
+    {{#each getElems }}
+        {{> parse_events }}
+    {{/each }}
+</template>
+
+<template name="parse_events">
+    <div class='{{mclass}}'>
+        <p>{{ name }} {{ resultstr }} {{ money }}{{ curr }} {{ final }}</p>
+    </div>
+</template>

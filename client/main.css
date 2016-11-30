@@ -1,0 +1,76 @@
+/* CSS declarations go here */
+
+@font-face {
+    font-family: museosans;
+    src: url('/fonts/museosans-rounded700.ttf');
+}
+
+.body {
+    font-family: museosans;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    font-family: museosans;
+}
+
+.header-row {
+    background-color: #00CF98;
+    font-size: 200%;
+    text-align: center;
+}
+
+.mevents {
+    height: auto;
+    font-size: 180%;
+    text-align: center;
+}
+
+.event-loss {
+    background-color: #DC5454;
+    border-radius: 20px;
+    padding: 8%;
+    margin-top: 10px;
+}
+
+.event-win {
+    background-color: #00CF98;
+    border-radius: 20px;
+    padding: 8%;
+    margin-top: 10px;
+}
+
+.event-connect {
+    background-color: #D9D9D9;
+    border-radius: 20px;
+    padding: 8%;
+    margin-top: 10px;
+}
+
+.event-bet {
+    background-color: #B340FF;
+    border-radius: 20px;
+    padding: 8%;
+    margin-top: 10px;
+}
+
+#my-chart {
+    height: 800px;
+}
+
+.ct-line.ct-threshold-above, .ct-point.ct-threshold-above, .ct-bar.ct-threshold-above {
+    stroke: #f05b4f;
+}
+
+.ct-line.ct-threshold-below, .ct-point.ct-threshold-below, .ct-bar.ct-threshold-below {
+    stroke: #59922b;
+}
+
+.ct-area.ct-threshold-above {
+    fill: #f05b4f;
+}
+
+.ct-area.ct-threshold-below {
+    fill: #59922b;
+}
