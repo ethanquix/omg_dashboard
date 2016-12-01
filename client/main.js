@@ -7,37 +7,47 @@ Session.setDefault('nbSignup', 0);
 Session.setDefault('nbAffiliation', 0);
 Session.setDefault('cg', 0);
 Session.setDefault('listCandle', []);
-Session.setDefault('nbCandleMax', 120);
+Session.setDefault('nbCandleMax', 600);
+Session.setDefault('listTrades', []);
+Session.setDefault('chartTrades', []);
 
 let mid = String(Math.floor((Math.random() * 1000) + 1));
 
 Meteor.subscribe('trades', mid);
+Meteor.subscribe('candles');
 
 Template.opt_button.helpers({
   GETnbCandleMax: function () {
-    return (Session.get('nbCandleMax'));
+    let tmp = Session.get('nbCandleMax');
+
+    if (tmp <= 60) {
+      return (String(tmp) + 's');
+    }
+    else {
+      return (String(Math.round(tmp / 60, 0)) + 'm');
+    }
   }
 });
 
 Template.opt_button.events({
   'click .m2': function () {
-    let tmp = Session.get('nbCandleMax') - 120;
-    if (tmp < 0) {
-      tmp = 0;
+    let tmp = Session.get('nbCandleMax') - 600;
+    if (tmp <= 0) {
+      tmp = 10;
     }
     Session.set('nbCandleMax', tmp);
   },
   'click .m1': function () {
-    let tmp = Session.get('nbCandleMax') - 60;
-    if (tmp < 0) {
-      tmp = 0;
+    let tmp = Session.get('nbCandleMax') - 120;
+    if (tmp <= 0) {
+      tmp = 10;
     }
     Session.set('nbCandleMax', tmp);
   },
   'click .m10': function () {
     let tmp = Session.get('nbCandleMax') - 10;
-    if (tmp < 0) {
-      tmp = 0;
+    if (tmp <= 0) {
+      tmp = 10;
     }
     Session.set('nbCandleMax', tmp);
   },
@@ -46,11 +56,11 @@ Template.opt_button.events({
     Session.set('nbCandleMax', tmp);
   },
   'click .p1': function () {
-    let tmp = Session.get('nbCandleMax') + 60;
+    let tmp = Session.get('nbCandleMax') + 120;
     Session.set('nbCandleMax', tmp);
   },
   'click .p2': function () {
-    let tmp = Session.get('nbCandleMax') + 120;
+    let tmp = Session.get('nbCandleMax') + 600;
     Session.set('nbCandleMax', tmp);
   }
 });
@@ -76,11 +86,9 @@ Template.top_header.helpers({
 Template.trade_events.helpers({
 
   getElems: function () {
-    let tmp = TradesDB.find().fetch();
-    tmp = tmp.slice(tmp.length - 5).reverse();
-    //   reverse();
-    drawMChart(1);
-    return tmp;
+    //tmp = tmp.slice() TODO
+//    drawMChart(1);
+    return Session.get('listTrades');
   }
 })
 
@@ -100,6 +108,9 @@ function drawMChart(arg) {
   let d = new Date();
   let cm = 60 + d.getMinutes();
   let i = 0;
+
+
+
   aLabel = []
 
   while (i < Session.get('nbCandleMax')) {
@@ -107,18 +118,10 @@ function drawMChart(arg) {
     i = i + 1;
   }
 
-  //aLabel = [(cm - 10) % 60, (cm - 9) % 60, (cm - 8) % 60, (cm - 7) % 60, (cm - 6) % 60, (cm - 5) % 60, (cm - 4) % 60, (cm - 3) % 60, (cm - 2) % 60, (cm - 1) % 60, cm % 60];
   aSerie = Session.get('listCandle');
+  //aSerie = aSerie;
 
-  aSerie = aSerie.reverse().slice(0, Session.get('nbCandleMax')).reverse();
-  // i = 10;
-  // cm = ~~(new Date().valueOf() / 60000)
-  // while (i >= 0) {
-  //   let tmp = TradesDB.find({cm: (cm - i), mid: mid}).count();
-  //   aSerie.push(tmp);
-  //   i = i - 1;
-  // }
-  let tmp = aSerie.slice(0, Session.get('nbCandleMax'));
+  let tmp =  aSerie;
   max = Math.max(...tmp);
   max = max + (max / 20);
   if (max <= 0) {
@@ -134,16 +137,18 @@ function drawMChart(arg) {
     i = i + 1;
   }
 
-  if (min == 999999){
+  if (min == 999999 || min == 0){
     min = 0;
   }
   else {
-    min = min - min % 10;
+    min = min - (min / 10);
   }
+
   var data = {
     labels: aLabel,
     series: [
-      aSerie
+        aSerie,
+        Session.get('chartTrades')
     ]
   };
 
@@ -178,36 +183,44 @@ function drawMChart(arg) {
     mChart = new Chartist.Line('.ct-chart', data, options);
     Session.set('cg', 1);
   }
-  else if (Session.get('cg') > 0 && arg == 1) {
+  else if (Session.get('cg') > 0 && arg == 1 && mChart) {
     mChart.update(data, options);
   }
 }
 
-function updateTradeVal() {
-  //retrieve trades value;
+function updateCandleVal() {
+  let max = Session.get('nbCandleMax');
+  let retCandle = CandlesDB.find({curr: "EUR/USD"}, {val: 1, _id:0}).fetch().reverse().slice(0, max).reverse();
+  let sessCandle = retCandle.map(function(b) {return b.val;});
+  Session.set('listCandle', sessCandle);
+  let retTrade = TradesDB.find().fetch();
+  let sessTrade = retTrade.slice(retTrade.length - 5).reverse();
+  Session.set('listTrades', sessTrade);
+  let tmpTrade = retTrade.reverse().slice(0, max).reverse();
+  let TradeTIME = tmpTrade.map(function(c) {return c.curTime});
+  let i = 0;
+  let out = [];
 
-  HTTP.call('GET', 'http://webrates.truefx.com/rates/connect.html', {
-    params: {
-      "c": "EUR/JPY"
+  while (i < max){
+    let search = retCandle[i].curTime;
+    let count = TradeTIME.reduce(function(n, val) {
+       return n + (val == search);
+     }, 0);
+    if (count == 0) {
+      out.push(null);
     }
-  }, function (error, response) {
-    if (error) {
-      console.log(error);
-    } else {
-      let value = response.content.substring(7, 15) * 10000 % 1000;
-      let tmp = Session.get('listCandle');
+    else {
+      out.push(retCandle[i].val);
+    }
+    i = i + 1;
+  }
 
-      tmp.push(value);
-      if (tmp.length > Session.get('nbCandleMax')) {
-        tmp = tmp.slice(1);
-      }
-      Session.set('listCandle', tmp);
-    }
-  });
+  console.log(out);
+  Session.set('chartTrades', out);
+  drawMChart(1);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   drawMChart(0);
-  // setSessionCandle();
-  setInterval(updateTradeVal, 1000);
+  setInterval(updateCandleVal, 200);
 });
