@@ -6,7 +6,7 @@
     </div>
     <div class="col-sm-4">
         <div class="header-right-left">
-            <p class="today-signup">Today Registration: <br>{{ nbSignup }}</p>
+            <p class="today-signup">Total Events: <br>{{ nbSignup }}</p>
         </div>
     </div>
     <div class="col-sm-4">
@@ -26,5 +26,17 @@
 <template name="parse_events">
     <div class='{{mclass}}'>
         <p>{{ name }} {{ resultstr }} {{ money }}{{ curr }} {{ final }}</p>
+    </div>
+</template>
+
+<template name="opt_button">
+    <div class="col-sm-8 arButton">
+        <button class="m2">-2m</button>
+        <button class="m1">-1m</button>
+        <button class="m10">-10s</button>
+        <button>{{ GETnbCandleMax }}</button>
+        <button class="p10">+10s</button>
+        <button class="p1">+1m</button>
+        <button class="p2">+2m</button>
     </div>
 </template>

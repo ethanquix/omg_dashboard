@@ -20,6 +20,24 @@ html, body {
     font-family: museosans;
 }
 
+button {
+    border-radius: 10px;
+    border: none;
+    background-color: #00CF98;
+    height: 100%;
+    padding-top: 1%;
+    padding-right: 4%;
+    padding-left: 4%;
+    padding-bottom: 1%;
+    margin-top: 0.5%;
+}
+
+.arButton {
+    text-align: center;
+    font-size: large;
+    font-family: museosans;
+}
+
 .row {
     margin-left: 0px;
     margin-right: 0px;
@@ -72,6 +90,7 @@ html, body {
 
 .ct-chart {
     margin-top: 20px;
+    border: 1px solid gray;
 }
 
 .ct-line.ct-threshold-above, .ct-point.ct-threshold-above, .ct-bar.ct-threshold-above {
@@ -92,4 +111,8 @@ html, body {
 
 .ct-label {
     font-size: 150%;
+}
+
+.ct-series-a .ct-area{
+    fill: #B340FF;
 }

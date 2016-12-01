@@ -7,20 +7,20 @@ if (Meteor.isServer) {
 
   Meteor.publish('trades', function (mid) {
     let self = this;
-    let name = "Jon Doe";
 
     Trades.changes().run((err, result) => {
       result.each(Meteor.bindEnvironment(function (err, row) {
 
         Users.filter({id: row.new_val.user_id}).run(function (err, res) {
           res.each(function (err, nres) {
+            let name = "Jon Doe";
             if (nres.facebook) {
               name = nres.facebook.name;
             }
             let money = String(row.new_val.outcome);
             let mclass = "";
             let curr = "€";
-            let resultstr = "bet";
+            let resultstr = "trade";
             let final = " from " + String(row.new_val.amount) + curr;
             let cm = ~~(new Date().valueOf() / 60000);
 
