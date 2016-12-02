@@ -21,7 +21,7 @@ getCandlesFurl = function() {
         }
       }
   );
-}
+};
 
 getTrades = function() {
   Trades.changes().run((err, result) => {
@@ -38,20 +38,22 @@ getTrades = function() {
           let resultstr = "trade";
           let final = " from " + String(row.new_val.amount) + curr;
           let cm = ~~(new Date().valueOf() / 60000);
+          let type = row.new_val.type;
 
           if (row.new_val.outcome == null) {
             mclass = "event-bet";
             money = String(row.new_val.amount);
             final = " on " + row.new_val.type;
-            prelast = String(row.new_val.type);
           }
           else if (row.new_val.outcome > 0) {
             mclass = "event-win";
             resultstr = "win";
+            type = null;
           }
           else {
             resultstr = "lost";
             mclass = "event-loss";
+            type = null;
           }
 
           money = money.replace('-', '');
@@ -65,7 +67,8 @@ getTrades = function() {
             final: final,
             name: name,
             cm: cm,
-            curTime: curTime
+            curTime: curTime,
+            type: type
           });
         });
       });

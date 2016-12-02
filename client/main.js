@@ -9,7 +9,8 @@ Session.setDefault('cg', 0);
 Session.setDefault('listCandle', []);
 Session.setDefault('nbCandleMax', 600);
 Session.setDefault('listTrades', []);
-Session.setDefault('chartTrades', []);
+Session.setDefault('chartTradesUP', []);
+Session.setDefault('chartTradesDOWN', []);
 
 let mid = String(Math.floor((Math.random() * 1000) + 1));
 
@@ -106,10 +107,7 @@ Template.trade_events.helpers({
 
 function drawMChart(arg) {
   let d = new Date();
-  let cm = 60 + d.getMinutes();
   let i = 0;
-
-
 
   aLabel = []
 
@@ -117,6 +115,8 @@ function drawMChart(arg) {
     aLabel.push("");
     i = i + 1;
   }
+
+  let cpaLabel = aLabel;
 
   aSerie = Session.get('listCandle');
   //aSerie = aSerie;
@@ -144,12 +144,21 @@ function drawMChart(arg) {
     min = min - (min / 10);
   }
 
+  let aTradeUP = Session.get('chartTradesUP');
+  let aTradeDOWN = Session.get('chartTradesDOWN');
+
   var data = {
     labels: aLabel,
-    series: [
-        aSerie,
-        Session.get('chartTrades')
-    ]
+    series: [{
+      name: 'candle',
+      data: aSerie
+    }, {
+      name: 'buy',
+      data: aTradeUP
+    }, {
+      name: 'sell',
+      data: aTradeDOWN
+    }]
   };
 
   var options = {
@@ -161,9 +170,6 @@ function drawMChart(arg) {
 
     high: max,
     low: min,
-    showPoint: false,
-    showLine: false,
-    showArea: true,
     fullWidth: true,
     showLabel: false,
     axisX: {
@@ -177,6 +183,20 @@ function drawMChart(arg) {
       offset: 0
     },
     chartPadding: 0,
+    series: {
+      'candle': {
+        lineSmooth: Chartist.Interpolation.simple(),
+        showPoint: false,
+        showLine: false,
+        showArea: true
+      },
+      'buy': {
+        lineSmooth: Chartist.Interpolation.step(),
+        showPoint: true,
+        showLine: false,
+        showArea: true
+      }
+    }
   };
 
   if (arg == 0) {
@@ -197,26 +217,54 @@ function updateCandleVal() {
   let sessTrade = retTrade.slice(retTrade.length - 5).reverse();
   Session.set('listTrades', sessTrade);
   let tmpTrade = retTrade.reverse().slice(0, max).reverse();
-  let TradeTIME = tmpTrade.map(function(c) {return c.curTime});
+  let TradeTIMEUP = tmpTrade.map(function(c) {
+    if (c.type == "up") {
+      return c.curTime;
+    }
+    return (0);
+  });
+  let TradeTIMEDOWN = tmpTrade.map(function(c) {
+    if (c.type == "down") {
+      return c.curTime;
+    }
+    return (0);
+  });
   let i = 0;
-  let out = [];
+  let outUP = [];
+  let outDOWN = [];
+  let maxLEN = retCandle.length;
 
-  while (i < max){
+  while (i < max && i < maxLEN){
     let search = retCandle[i].curTime;
-    let count = TradeTIME.reduce(function(n, val) {
+    let count = TradeTIMEUP.reduce(function(n, val) {
        return n + (val == search);
      }, 0);
     if (count == 0) {
-      out.push(null);
+      outUP.push(null);
     }
     else {
-      out.push(retCandle[i].val);
+      outUP.push(retCandle[i].val);
     }
     i = i + 1;
   }
 
-  console.log(out);
-  Session.set('chartTrades', out);
+  i = 0;
+  while (i < max && i < maxLEN){
+    let search = retCandle[i].curTime;
+    let count = TradeTIMEDOWN.reduce(function(n, val) {
+      return n + (val == search);
+    }, 0);
+    if (count == 0) {
+      outDOWN.push(null);
+    }
+    else {
+      outDOWN.push(retCandle[i].val);
+    }
+    i = i + 1;
+  }
+
+  Session.set('chartTradesUP', outUP);
+  Session.set('chartTradesDOWN', outDOWN);
   drawMChart(1);
 }
 

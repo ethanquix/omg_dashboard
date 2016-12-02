@@ -7,6 +7,7 @@
 
 html, body {
     height: 100%;
+    background-color: #453D3F;
 }
 
 .body {
@@ -114,9 +115,19 @@ button {
 }
 
 .ct-series-a .ct-area{
-    fill: #B340FF;
+    fill: white;
 }
 
 .timeButton {
     background-color: #B340FF;
+}
+
+.ct-series-b .ct-point {
+    stroke: green;
+    stroke-width: 2%;
+}
+
+.ct-series-c .ct-point {
+    stroke: red;
+    stroke-width: 2%;
 }
