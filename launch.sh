@@ -59,7 +59,15 @@ npm install fibers@1.0.15 -g >.logerror 2>&1 || {
         }
 sayok
 
-cp /usr/lib/node_modules/fibers/ prod/programs/server/node_modules/fibers -r
+
+echo -en "\nCopy of global fibers to modules\t"
+cp /usr/lib/node_modules/fibers/ prod/programs/server/npm/node_modules/fibers -r >.logerror 2>&1 || {
+        sayfail
+        cat ./.logerror
+        rm ./.logerror
+        exit 1
+        }
+sayok
 
 if [ ${nohup} = "false" ]
 then
