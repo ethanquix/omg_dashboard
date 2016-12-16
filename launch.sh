@@ -47,7 +47,7 @@ mv prod/bundle/* prod/
 rm -rf prod/bundle
 
 echo -en "\nNPM Install (can take some time\t"
-npm install prod/programs/server >.logerror 2>&1
+(cd prod/programs/server/ && npm install) >.logerror 2>&1
 sayok
 
 echo -en "\nThere is a bug with fibers need to install them globally and then copy to node_modules\t"
@@ -61,7 +61,7 @@ sayok
 
 
 echo -en "\nCopy of global fibers to modules\t"
-cp /usr/lib/node_modules/fibers/ prod/programs/server/npm/node_modules/fibers -r >.logerror 2>&1 || {
+cp /usr/lib/node_modules/fibers/ prod/programs/server/node_modules/fibers -r >.logerror 2>&1 || {
         sayfail
         cat ./.logerror
         rm ./.logerror
