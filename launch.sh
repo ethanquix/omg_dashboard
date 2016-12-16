@@ -69,7 +69,7 @@ sayok
 
 cp /usr/lib/node_modules/fibers/ prod/programs/server/node_modules/fibers -r
 
-if [ ${nohup} = "true" ]
+if [ ${nohup} = "false" ]
 then
     echo -en "\nLaunching app\t"
     meteor node prod/main.js >.logerror 2>&1 || {
