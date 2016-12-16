@@ -211,64 +211,35 @@ function drawMChart(arg) {
 function updateCandleVal() {
   let max = Session.get('nbCandleMax');
   let retCandle = CandlesDB.find({curr: "EUR/USD"}, {val: 1, _id:0}).fetch().reverse().slice(0, max).reverse();
+  let bckp = CandlesDB.find({curr: "EUR/USD"}, {val: 1, _id:0}).fetch().reverse().slice(0, max).reverse();
+
   let sessCandle = retCandle.map(function(b) {return b.val;});
   Session.set('listCandle', sessCandle);
   let retTrade = TradesDB.find().fetch();
   let sessTrade = retTrade.slice(retTrade.length - 5).reverse();
   Session.set('listTrades', sessTrade);
-  let tmpTrade = retTrade.reverse().slice(0, max).reverse();
-  let TradeTIMEUP = tmpTrade.map(function(c) {
+
+  let tmpa = bckp.map(function(c) {
     if (c.type == "up") {
-      return c.curTime;
+      return c.val;
     }
-    return (0);
+    return null;
   });
-  let TradeTIMEDOWN = tmpTrade.map(function(c) {
+
+
+  let tmpb = retCandle.map(function(c) {
     if (c.type == "down") {
-      return c.curTime;
+      return c.val;
     }
-    return (0);
+    return null;
   });
-  let i = 0;
-  let outUP = [];
-  let outDOWN = [];
-  let maxLEN = retCandle.length;
 
-  while (i < max && i < maxLEN){
-    let search = retCandle[i].curTime;
-    let count = TradeTIMEUP.reduce(function(n, val) {
-       return n + (val == search);
-     }, 0);
-    if (count == 0) {
-      outUP.push(null);
-    }
-    else {
-      outUP.push(retCandle[i].val);
-    }
-    i = i + 1;
-  }
-
-  i = 0;
-  while (i < max && i < maxLEN){
-    let search = retCandle[i].curTime;
-    let count = TradeTIMEDOWN.reduce(function(n, val) {
-      return n + (val == search);
-    }, 0);
-    if (count == 0) {
-      outDOWN.push(null);
-    }
-    else {
-      outDOWN.push(retCandle[i].val);
-    }
-    i = i + 1;
-  }
-
-  Session.set('chartTradesUP', outUP);
-  Session.set('chartTradesDOWN', outDOWN);
+  Session.set('chartTradesUP', tmpa);
+  Session.set('chartTradesDOWN', tmpb);
   drawMChart(1);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   drawMChart(0);
-  setInterval(updateCandleVal, 200);
+  setInterval(updateCandleVal, 1000);
 });

@@ -1,6 +1,6 @@
 import {Meteor} from 'meteor/meteor';
 
-getCandlesFurl = function() {
+getCandlesFurl = function () {
   HTTP.call('GET', 'http://webrates.truefx.com/rates/connect.html', {
         params: {
           "c": "EUR/USD"
@@ -11,19 +11,20 @@ getCandlesFurl = function() {
           console.log(error);
         } else {
           let value = response.content.substring(7, 15) * 10000 % 10;
-          let curTime = Math.round(+ new Date() / 1000);
+          let curTime = Math.round(+new Date() / 1000);
 
           CandlesDB.insert({
-            val: value,
             curr: "EUR/USD",
-            curTime: curTime
+            curTime: curTime,
+            val: value,
+            type: null
           });
         }
       }
   );
 };
 
-getTrades = function() {
+getTrades = function () {
   Trades.changes().run((err, result) => {
     result.each(Meteor.bindEnvironment(function (err, row) {
       Users.filter({id: row.new_val.user_id}).run(function (err, res) {
@@ -39,6 +40,8 @@ getTrades = function() {
           let final = " from " + String(row.new_val.amount) + curr;
           let cm = ~~(new Date().valueOf() / 60000);
           let type = row.new_val.type;
+          let curTime = Math.round(+new Date() / 1000);
+
 
           if (row.new_val.outcome == null) {
             mclass = "event-bet";
@@ -57,8 +60,6 @@ getTrades = function() {
           }
 
           money = money.replace('-', '');
-          let curTime = Math.round(+ new Date() / 1000);
-
           TradesDB.insert({
             money: money,
             mclass: mclass,
@@ -70,6 +71,19 @@ getTrades = function() {
             curTime: curTime,
             type: type
           });
+
+          if (row.new_val.outcome == null) {
+            Meteor.setTimeout(function () {
+              CandlesDB.update(
+                  {curTime: curTime},
+                  {
+                    $set: {
+                      curr: "EUR/USD",
+                      type: row.new_val.type,
+                    }
+                  });
+            }, 1000);
+          }
         });
       });
     }));
