@@ -25,14 +25,6 @@ rm ./.logerror >/dev/null
 
 clear
 
-echo -en "\nCreation of server folder\t" >.logerror 2>&1 || {
-        sayfail
-        cat ./.logerror
-        rm ./.logerror
-        exit 1
-        }
-sayok
-
 echo -en "\nCreation of prod folder\t"
 mkdir prod >.logerror 2>&1 || {
         sayfail
@@ -55,11 +47,11 @@ mv prod/bundle/* prod/
 rm -rf prod/bundle
 
 echo -en "\nNPM Install (can take some time\t"
-npm install prod/programs/server
+npm install prod/programs/server >.logerror 2>&1
 sayok
 
 echo -en "\nThere is a bug with fibers need to install them globally and then copy to node_modules\t"
-npm install fibers@1.0.15 >.logerror 2>&1 || {
+npm install fibers@1.0.15 -g >.logerror 2>&1 || {
         sayfail
         cat ./.logerror
         rm ./.logerror
