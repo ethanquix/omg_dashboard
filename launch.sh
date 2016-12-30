@@ -76,8 +76,7 @@ then
         sayfail
         cat ./.logerror
         rm ./.logerror
-        cat p
-        rod/README
+        cat prod/README
         echo "YOU HAVE ALSO TO INSTALL METEOR AND SET THE ENV VARIABLES TO ENV LOOK AT THE LAUNCH.SH SCRIPT ON THE BEGINNING"
         exit 1
         }
