@@ -9,6 +9,7 @@ Featuring
     You can change the Graph time
     Dots on the graph to show the trades of the players
     Number of players connected
+    ![Tetris](https://raw.githubusercontent.com/ethanquix/ressources/master/gif/dashboard.gif)
 Installation
 ----------
     git clone https://github.com/ethanquix/omg_dashboard.git
