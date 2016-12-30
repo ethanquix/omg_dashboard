@@ -19,6 +19,11 @@ getCandlesFurl = function () {
             val: value,
             type: null
           });
+
+            if (CandlesDB.find().count() > 10000) {
+                let tmp = CandlesDB.find().fetch()[0]._id;
+                CandlesDB.remove({_id: tmp});
+            }
         }
       }
   );

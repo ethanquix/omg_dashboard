@@ -4,13 +4,13 @@ if (Meteor.isServer) {
 
   Meteor.publish('trades', function () {
     this.ready();
-    return (TradesDB.find());
+      return (TradesDB.find());
   });
 
 
   Meteor.publish('candles', function () {
     this.ready();
-    return (CandlesDB.find());
+      return (CandlesDB.find());
   });
 
   Meteor.methods({
