@@ -20,10 +20,16 @@ getCandlesFurl = function () {
             type: null
           });
 
-            if (CandlesDB.find().count() > 10000) {
-                let tmp = CandlesDB.find().fetch()[0]._id;
-                CandlesDB.remove({_id: tmp});
-            }
+          let count = CandlesDB.find().count();
+          console.log(count);
+          if (count > 10000) {
+            let max = count - 10000;
+            CandlesDB.find({}, {limit: max})
+                .map(function(doc) {
+                  console.log(doc._id);
+                  CandlesDB.remove({_id: doc._id});
+                });
+          }
         }
       }
   );
@@ -76,6 +82,17 @@ getTrades = function () {
             curTime: curTime,
             type: type
           });
+
+          let count = TradesDB.find().count();
+          console.log(count);
+          if (count > 10000) {
+            let max = count - 10000;
+            TradesDB.find({}, {limit: max})
+                .map(function(doc) {
+                  console.log(doc._id);
+                  TradesDB.remove({_id: doc._id});
+                });
+          }
 
           if (row.new_val.outcome == null) {
             Meteor.setTimeout(function () {
